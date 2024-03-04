@@ -7,7 +7,12 @@ const getContacts = expressAsyncHandler(async (req, res) => {
 });
 
 const getContactbyId = expressAsyncHandler(async (req, res) => {
-  res.status(200).json({ message: `get contact by id ${req.params.id}` });
+  const contact = await Contact.findById(req.params.id);
+  if (!contact) {
+    res.status(404);
+    throw new Error("Contact not found");
+  }
+  res.status(200).json(contact);
 });
 const createContact = expressAsyncHandler(async (req, res) => {
   const { name, email, phone } = req.body;
@@ -23,10 +28,14 @@ const createContact = expressAsyncHandler(async (req, res) => {
   res.status(200).json(contact);
 });
 const deleteAll = expressAsyncHandler(async (req, res) => {
-  res.status(200).json({ message: "delete contacts" });
+  const contacts = await Contact.deleteMany();
+
+  res.status(200).json(contacts);
 });
 const deleteContactbyId = expressAsyncHandler(async (req, res) => {
-  res.status(200).json({ message: `delete contact by id ${req.params.id}` });
+  const contact = await Contact.findByIdAndDelete(req.params.id);
+  if (!contact) throw new Error("Contact not found");
+  res.status(200).json(contact);
 });
 const updateContact = expressAsyncHandler(async (req, res) => {
   const { name, email, phone } = req.body;
