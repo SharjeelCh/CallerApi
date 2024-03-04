@@ -29,7 +29,21 @@ const deleteContactbyId = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ message: `delete contact by id ${req.params.id}` });
 });
 const updateContact = expressAsyncHandler(async (req, res) => {
-  res.status(200).json({ message: `update contact ${req.params.id}` });
+  const { name, email, phone } = req.body;
+  if (!name || !email || !phone) {
+    res.status(400);
+    throw console.error("Please fill all the fields");
+  }
+  const contact = await Contact.findByIdAndUpdate(
+    req.params.id,
+    {
+      name,
+      email,
+      phone,
+    },
+    { new: true, runValidators: true }
+  );
+  res.status(200).json(contact);
 });
 
 module.exports = {
