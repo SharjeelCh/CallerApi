@@ -2,7 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const Contact = require("../Modals/contactModals");
 
 const getContacts = expressAsyncHandler(async (req, res) => {
-  const contacts =await Contact.find();
+  const contacts = await Contact.find();
   res.status(200).json(contacts);
 });
 
@@ -15,11 +15,11 @@ const createContact = expressAsyncHandler(async (req, res) => {
     res.status(400);
     throw console.error("Please fill all the fields");
   }
-  const contact=await Contact.create({
+  const contact = await Contact.create({
     name,
     email,
     phone,
-  })
+  });
   res.status(200).json(contact);
 });
 const deleteAll = expressAsyncHandler(async (req, res) => {
