@@ -8,6 +8,9 @@ const {
   deleteContactbyId,
   updateContact,
 } = require("../Controllers/routerController");
+const validateUserToken = require("../validateUserToken");
+
+router.use(validateUserToken);
 
 router.route("/").get(getContacts);
 

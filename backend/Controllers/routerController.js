@@ -2,7 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const Contact = require("../Modals/contactModals");
 
 const getContacts = expressAsyncHandler(async (req, res) => {
-  const contacts = await Contact.find();
+  const contacts = await Contact.find({ user_id: req.user.id });
   res.status(200).json(contacts);
 });
 
@@ -24,6 +24,7 @@ const createContact = expressAsyncHandler(async (req, res) => {
     name,
     email,
     phone,
+    user_id: req.user.id,
   });
   res.status(200).json(contact);
 });
