@@ -2,6 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const Contact = require("../Modals/contactModals");
 
 const getContacts = expressAsyncHandler(async (req, res) => {
+  console.log(req.user.id)
   const contacts = await Contact.find({ user_id: req.user.id });
   res.status(200).json(contacts);
 });
@@ -20,11 +21,12 @@ const createContact = expressAsyncHandler(async (req, res) => {
     res.status(400);
     throw console.error("Please fill all the fields");
   }
+  console.log(req.user.id)
   const contact = await Contact.create({
+    user_id: req.user.id,
     name,
     email,
     phone,
-    user_id: req.user.id,
   });
   res.status(200).json(contact);
 });
@@ -36,6 +38,10 @@ const deleteAll = expressAsyncHandler(async (req, res) => {
 const deleteContactbyId = expressAsyncHandler(async (req, res) => {
   const contact = await Contact.findByIdAndDelete(req.params.id);
   if (!contact) throw new Error("Contact not found");
+  if(contact.user_id.toString()!=req.user.id.toString()){
+    res.status(401);
+    throw new Error("You are not authorized to delete this contact")
+  }
   res.status(200).json(contact);
 });
 const updateContact = expressAsyncHandler(async (req, res) => {
@@ -43,6 +49,10 @@ const updateContact = expressAsyncHandler(async (req, res) => {
   if (!name || !email || !phone) {
     res.status(400);
     throw console.error("Please fill all the fields");
+  }
+  if(contact.user_id.toString()!=req.user.id.toString()){
+    res.status(401);
+    throw new Error("You are not authorized to update this contact")
   }
   const contact = await Contact.findByIdAndUpdate(
     req.params.id,
